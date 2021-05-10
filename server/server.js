@@ -2,11 +2,13 @@ require("dotenv").config();
 const express = require("express");
 //const cors = require("cors");
 const db = require("./db");
+const cors = require("cors");
 const morgan = require("morgan");
 
 const app = express();
 const port = process.env.PORT || 3001;
 
+app.use(cors());
 app.use(express.json());
 
 //get all rest o
@@ -14,7 +16,6 @@ app.get("/api/v1/restaurants", async (req, res) => {
    
     try { 
         const results = await db.query("SELECT * FROM restaurants")
-        console.log(results);
         res.status(200).json({
             status: "success",
             results: results.rows.length,
@@ -37,7 +38,7 @@ app.get("/api/v1/restaurants/:id", async (req, res) => {
             status: "success",
             results: results.rows.length,
             data: {
-                restaurants: results.rows
+                restaurant: results.rows[0]
             }
         });
     } catch (err) {
@@ -56,7 +57,7 @@ app.post("/api/v1/restaurants", async (req, res) => {
         res.status(201).json({
             status: "success",
             data: {
-                restaurants: results.rows
+                restaurant: results.rows[0]
             }
         });        
     } catch (err) {
@@ -73,7 +74,7 @@ app.put("/api/v1/restaurants/:id", async (req, res) => {
         res.status(201).json({
             status: "success",
             data: {
-                restaurants: results.rows
+                restaurant: results.rows[0]
             }
         });
     } catch (err) {
