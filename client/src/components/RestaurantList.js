@@ -1,10 +1,62 @@
-import React from "react";
+import React, {useContext, useEffect} from "react";
+import RestaurantFinder from "../api/RestaurantFinder";
+import { RestaurantsContext } from "../context/RestaurantsContext";
+import { useHistory } from "react-router-dom";
+import StarRating from "./StarRating";
 
 const RestaurantList  = () => {
+    const {restaurants, setRestaurants} = useContext(RestaurantsContext);
+//    const [count, setCount] = useState(0);
+
+    let history = useHistory();
+
+    useEffect(() => {
+        const fetchData = async () => {
+            try {
+                const response = await RestaurantFinder.get("/");
+                setRestaurants(response.data.data.restaurants)
+            } catch (err) {
+                console.log(err);
+            }     
+        }
+        fetchData();
+          
+    }, []); //the empty dependecy array makes sure that it only runs when mounted and not when re-rendered 
+    
+    const handleDelete = async (e, id) => {
+        e.stopPropagation();
+        try {
+            const response = await RestaurantFinder.delete(`/${id}`);
+            setRestaurants(restaurants.filter(restaurant => {
+                return restaurant.id !== id;
+            }));
+        } catch (err) {
+            console.log(err);
+        }
+    }
+
+    const handleUpdate = (e, id) => {
+        e.stopPropagation();
+        history.push(`/restaurants/${id}/update`)
+    }
+
+    const handleRestaurantSelect = (id) => {
+        history.push(`/restaurants/${id}`);
+    }
+    const renderRating = (restaurant) => {
+        if (!restaurant.count) {
+          return <span className="text-warning">0 reviews</span>;
+        }
+        return (
+          <>
+            <StarRating rating={restaurant.id} />
+            <span className="text-warning ml-1">({restaurant.count})</span>
+          </>
+        );
+      };
     return (
-      <div class="list-group">
-           
-           <table class="table table-striped table-hover .thead-dark">
+      <div className="list-group">  
+           <table className="table table-striped table-hover .thead-dark">
             <thead>
                 <tr>
                 <th scope="col">#</th>
@@ -17,33 +69,20 @@ const RestaurantList  = () => {
                 </tr>
             </thead>
             <tbody>
-                <tr>
-                    <th scope="row">1</th>
-                    <td>McDonalds</td>
-                    <td>New York</td>
-                    <td>$$</td>
-                    <td>Rating</td>
-                    <td><div class="button btn btn-warning">Update</div></td>
-                    <td><div class="button btn btn-danger">Delete</div></td>
-                </tr>
-                <tr>
-                    <th scope="row">2</th>
-                    <td>Wendys</td>
-                    <td>New York</td>
-                    <td>$</td>
-                    <td>Rating</td>
-                    <td><div class="button btn btn-warning">Update</div></td>
-                    <td><div class="button btn btn-danger">Delete</div></td>
-                </tr>
-                <tr>
-                    <th scope="row">3</th>
-                    <td>Chattime</td>
-                    <td>Toronto</td>
-                    <td>$$</td>
-                    <td>Rating</td>
-                    <td><div class="button btn btn-warning">Update</div></td>
-                    <td><div class="button btn btn-danger">Delete</div></td>
-                </tr>
+                {restaurants && restaurants.map((restaurant) => { 
+                    return (
+                            
+                        <tr onClick={() => handleRestaurantSelect(restaurant.id)} key= {restaurant.id}>
+                            <th scope="row">{restaurant.id}</th>
+                            <td>{restaurant.name}</td>
+                            <td>{restaurant.location}</td>
+                            <td>{"$".repeat(restaurant.price_range)}</td>
+                            <td>{renderRating(restaurant)}</td>
+                            <td><button onClick={(e) => handleUpdate(e, restaurant.id)} className="button btn btn-warning">Update</button></td>
+                            <td><button onClick={(e) => handleDelete(e, restaurant.id)} className="button btn btn-danger">Delete</button></td>
+                        </tr>
+                    );
+                })}
             </tbody>
         </table>
 
