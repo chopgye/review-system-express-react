@@ -21,6 +21,11 @@ const AddRestaurant = () => {
             console.log(err);
         }
       };
+    const btn_style = {
+        color: "grey",
+        backgroundColor: "white",
+        marginTop: "10px"
+    }
     return (
         <div className="mb-4">
         <form action="">
@@ -57,7 +62,7 @@ const AddRestaurant = () => {
                     </select>
                 </div>
                 <div className="col-md-12 text-center">
-                    <button onClick={handleSubmit} className="btn btn-primary">Add</button>   
+                    <button onClick={handleSubmit} className="btn btn-primary" style={ btn_style }>Add</button>   
                 </div>
             </div>
         </form>

@@ -49,8 +49,11 @@ const RestaurantList  = () => {
         }
         return (
           <>
-            <StarRating rating={restaurant.id} />
+            <StarRating rating={restaurant.average_rating} />
             <span className="text-warning ml-1">({restaurant.count})</span>
+            <span className="text-warning ml-1">({restaurant.name})</span>
+
+
           </>
         );
       };
@@ -59,7 +62,7 @@ const RestaurantList  = () => {
            <table className="table table-striped table-hover .thead-dark">
             <thead>
                 <tr>
-                <th scope="col">#</th>
+                
                 <th scope="col">Restaurant</th>
                 <th scope="col">Location</th>
                 <th scope="col">Price Range</th>
@@ -73,7 +76,7 @@ const RestaurantList  = () => {
                     return (
                             
                         <tr onClick={() => handleRestaurantSelect(restaurant.id)} key= {restaurant.id}>
-                            <th scope="row">{restaurant.id}</th>
+        
                             <td>{restaurant.name}</td>
                             <td>{restaurant.location}</td>
                             <td>{"$".repeat(restaurant.price_range)}</td>
